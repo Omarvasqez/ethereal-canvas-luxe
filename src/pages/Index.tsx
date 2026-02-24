@@ -1,19 +1,11 @@
-import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/HeroSection";
-import PhilosophySection from "@/components/PhilosophySection";
-import CollectionSection from "@/components/CollectionSection";
-import CraftSection from "@/components/CraftSection";
-import FooterSection from "@/components/FooterSection";
+import JewelryExperience from "@/components/JewelryExperience";
+import ExperienceOverlay from "@/components/ExperienceOverlay";
 
 const Index = () => {
   return (
-    <div className="overflow-x-hidden">
-      <Navbar />
-      <HeroSection />
-      <PhilosophySection />
-      <CollectionSection />
-      <CraftSection />
-      <FooterSection />
+    <div className="w-full h-screen overflow-hidden bg-background">
+      <JewelryExperience />
+      <ExperienceOverlay />
     </div>
   );
 };
