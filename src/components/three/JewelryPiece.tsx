@@ -108,7 +108,7 @@ const JewelryPiece = ({
         anchorY="top"
         fillOpacity={textOpacity.current}
         letterSpacing={0.15}
-        font="/fonts/cormorant.woff"
+        font="https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjQEl5fsQ.woff2"
       >
         {title}
       </Text>
