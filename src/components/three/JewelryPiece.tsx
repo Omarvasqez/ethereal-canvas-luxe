@@ -1,6 +1,5 @@
-import { useRef, useState } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
-import { Image, Text } from "@react-three/drei";
+import { useRef, useState, useMemo } from "react";
+import { useFrame, useThree, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 
 interface JewelryPieceProps {
@@ -31,19 +30,26 @@ const JewelryPiece = ({
   const glowRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const { camera } = useThree();
-  const textOpacity = useRef(0);
   const imageScale = useRef(1);
   const glowIntensity = useRef(0);
+
+  const texture = useLoader(THREE.TextureLoader, image);
+
+  const material = useMemo(() => {
+    return new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true,
+      opacity: 0.97,
+      toneMapped: false,
+      side: THREE.DoubleSide,
+    });
+  }, [texture]);
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
     const clampedDelta = Math.min(delta, 0.05);
 
     const dist = camera.position.distanceTo(new THREE.Vector3(...position));
-
-    // Text visibility based on proximity
-    const targetOpacity = dist < 6 ? Math.max(0, 1 - (dist - 2.5) / 3.5) : 0;
-    textOpacity.current = THREE.MathUtils.lerp(textOpacity.current, targetOpacity, clampedDelta * 3);
 
     // Hover glow with smooth transition
     const targetGlow = hovered ? 0.12 : (dist < 5 ? 0.04 : 0.02);
@@ -53,7 +59,7 @@ const JewelryPiece = ({
       (glowRef.current.material as THREE.MeshBasicMaterial).opacity = glowIntensity.current;
     }
 
-    // Breathing animation - smoother with sin
+    // Breathing animation
     const time = Date.now() * 0.0006;
     const breathe = Math.sin(time + position[0] * 0.5) * 0.015 + 1;
     const targetScale = isActive ? 1.08 : hovered ? 1.04 : breathe;
@@ -88,13 +94,11 @@ const JewelryPiece = ({
           onClick();
         }}
       >
-        <Image
-          url={image}
-          transparent
-          opacity={0.97}
-          scale={[3, 3]}
-          toneMapped={false}
-        />
+        {/* Jewelry image as textured plane */}
+        <mesh>
+          <planeGeometry args={[3, 3]} />
+          <primitive object={material} attach="material" />
+        </mesh>
 
         {/* Multi-layer glow for depth */}
         <mesh ref={glowRef} position={[0, 0, -0.05]}>
@@ -106,48 +110,6 @@ const JewelryPiece = ({
           <meshBasicMaterial color="#c9a96e" transparent opacity={0.015} />
         </mesh>
       </group>
-
-      {/* Title */}
-      <Text
-        position={[0, -2.2, 0]}
-        fontSize={0.35}
-        color="#3d3226"
-        anchorX="center"
-        anchorY="top"
-        fillOpacity={textOpacity.current}
-        letterSpacing={0.15}
-        font="https://fonts.gstatic.com/s/cormorantgaramond/v16/co3YmX5slCNuHLi8bLeY9MK7whWMhyjQEl5fsQ.woff2"
-      >
-        {title}
-      </Text>
-
-      {/* Subtitle */}
-      <Text
-        position={[0, -2.7, 0]}
-        fontSize={0.12}
-        color="#c9a96e"
-        anchorX="center"
-        anchorY="top"
-        fillOpacity={textOpacity.current * 0.8}
-        letterSpacing={0.3}
-      >
-        {subtitle.toUpperCase()}
-      </Text>
-
-      {/* Description */}
-      <Text
-        position={[0, -3.2, 0]}
-        fontSize={0.13}
-        color="#8a7b6b"
-        anchorX="center"
-        anchorY="top"
-        fillOpacity={textOpacity.current * 0.7}
-        maxWidth={3}
-        textAlign="center"
-        lineHeight={1.6}
-      >
-        {description}
-      </Text>
     </group>
   );
 };
