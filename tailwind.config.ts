@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Cormorant Garamond', 'serif'],
-        body: ['Jost', 'sans-serif'],
+        display: ['Marcellus SC', 'serif'],
+        body: ['Geo Sans Light', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
