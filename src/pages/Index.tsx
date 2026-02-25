@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import JewelryExperience from "@/components/JewelryExperience";
 import ExperienceOverlay from "@/components/ExperienceOverlay";
+import CartPanel from "@/components/CartPanel";
 
 const Index = () => {
   const [activePiece, setActivePiece] = useState<number | null>(null);
@@ -26,6 +27,7 @@ const Index = () => {
         onClose={handleClose}
         scrollProgress={scrollProgress}
       />
+      <CartPanel />
     </div>
   );
 };
