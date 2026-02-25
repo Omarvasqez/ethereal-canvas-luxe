@@ -27,6 +27,7 @@ const JewelryPiece = ({
   onClick,
 }: JewelryPieceProps) => {
   const groupRef = useRef<THREE.Group>(null);
+  const imageGroupRef = useRef<THREE.Group>(null);
   const glowRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const { camera } = useThree();
@@ -58,6 +59,12 @@ const JewelryPiece = ({
     const targetScale = isActive ? 1.08 : hovered ? 1.04 : breathe;
     imageScale.current = THREE.MathUtils.lerp(imageScale.current, targetScale, clampedDelta * 3);
 
+    // Apply scale imperatively
+    if (imageGroupRef.current) {
+      const s = imageScale.current * scale;
+      imageGroupRef.current.scale.set(s, s, 1);
+    }
+
     // Gentle float
     groupRef.current.position.y =
       position[1] + Math.sin(time * 0.8 + position[0]) * 0.06;
@@ -66,7 +73,8 @@ const JewelryPiece = ({
   return (
     <group ref={groupRef} position={position} rotation={rotation}>
       <group
-        scale={[imageScale.current * scale, imageScale.current * scale, 1]}
+        ref={imageGroupRef}
+        scale={[scale, scale, 1]}
         onPointerOver={() => {
           setHovered(true);
           document.body.style.cursor = "pointer";
